@@ -32,7 +32,7 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;numberValue&quot;: 23}</stringProp>
+                <stringProp name="Argument.value">{&quot;numberValue&quot;: 1}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -84,7 +84,7 @@
                 <threadCounts>true</threadCounts>
               </value>
             </objProp>
-            <stringProp name="filename">/home/nikolay/vianor-ru-hybris/myMicroservice/src/test/jmeter/results/Summary.csv</stringProp>
+            <stringProp name="filename">/home/nikolay/Desktop/testPlanForJmeter.csv</stringProp>
           </ResultCollector>
           <hashTree/>
         </hashTree>
