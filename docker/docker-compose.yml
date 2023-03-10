@@ -4,9 +4,9 @@ services:
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
 
@@ -39,6 +39,10 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/error.log:/etc/nginx/error_log.log
       - ./nginx/cache/:/etc/nginx/cache
+    depends_on:
+      - producer-1
+      - producer-2
+      - producer-3
     ports:
       - "8080:8080"
 
@@ -73,3 +77,21 @@ services:
     environment:
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
       server.port: 8083
+
+  consumer:
+    image: vernik777/spring-boot-docker:spring-plugin
+    container_name: consumer
+    depends_on:
+      - producer-1
+      - producer-2
+      - producer-3
+      - db
+    ports:
+      - "8084:8084"
+    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: postgres
+#      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      server.port: 8084
