@@ -8,7 +8,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     ports:
-      - '5432:5432'
+      - "5432:5432"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -23,14 +23,16 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - 29092:29092
+      - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://127.0.0.1:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   nginx:
     image: nginx:alpine
     volumes:
@@ -39,3 +41,35 @@ services:
       - ./nginx/cache/:/etc/nginx/cache
     ports:
       - "8080:8080"
+
+  producer-1:
+    image: vernik777/spring-boot-docker:spring-plugin
+    container_name: producer-1
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+
+  producer-2:
+    image: vernik777/spring-boot-docker:spring-plugin
+    container_name: producer-2
+    depends_on:
+      - kafka
+    ports:
+      - "8082:8082"
+    environment:
+      server.port: 8082
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+
+  producer-3:
+    image: vernik777/spring-boot-docker:spring-plugin
+    container_name: producer-3
+    depends_on:
+      - kafka
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      server.port: 8083
