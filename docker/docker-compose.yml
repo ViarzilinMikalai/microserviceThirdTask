@@ -3,12 +3,13 @@ services:
   db:
     image: postgres:14.1-alpine
     restart: always
+    container_name: db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -51,6 +52,7 @@ services:
     container_name: producer-1
     depends_on:
       - kafka
+      - consumer
     ports:
       - "8081:8081"
     environment:
@@ -61,10 +63,10 @@ services:
     container_name: producer-2
     depends_on:
       - kafka
+      - consumer
     ports:
       - "8082:8082"
     environment:
-      server.port: 8082
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
 
   producer-3:
@@ -72,26 +74,23 @@ services:
     container_name: producer-3
     depends_on:
       - kafka
+      - consumer
     ports:
       - "8083:8083"
     environment:
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
-      server.port: 8083
 
   consumer:
-    image: vernik777/spring-boot-docker:spring-plugin
+    image: vernik777/my-number-consumer:spring-plugin
     container_name: consumer
     depends_on:
-      - producer-1
-      - producer-2
-      - producer-3
       - db
     ports:
       - "8084:8084"
     environment:
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: postgres
-#      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
-      server.port: 8084
+

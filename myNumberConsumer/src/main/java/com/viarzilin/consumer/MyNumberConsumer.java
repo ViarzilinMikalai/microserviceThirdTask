@@ -25,7 +25,7 @@ public class MyNumberConsumer {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        log.info(num.toString());
+        log.info("Get number" + num.toString());
         service.saveMyNumber(num);
     }
 }
