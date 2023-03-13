@@ -58,7 +58,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>vernik777/my-number-consumer:spring-plugin</imageName>
+                    <imageName>vernik777/my-number-consumer</imageName>
                 </configuration>
             </plugin>
         </plugins>

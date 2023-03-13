@@ -48,7 +48,7 @@ services:
       - "8080:8080"
 
   producer-1:
-    image: vernik777/spring-boot-docker:spring-plugin
+    image: vernik777/my-number-producer:latest
     container_name: producer-1
     depends_on:
       - kafka
@@ -59,7 +59,7 @@ services:
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
 
   producer-2:
-    image: vernik777/spring-boot-docker:spring-plugin
+    image: vernik777/my-number-producer:latest
     container_name: producer-2
     depends_on:
       - kafka
@@ -70,7 +70,7 @@ services:
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
 
   producer-3:
-    image: vernik777/spring-boot-docker:spring-plugin
+    image: vernik777/my-number-producer:latest
     container_name: producer-3
     depends_on:
       - kafka
@@ -81,7 +81,7 @@ services:
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
 
   consumer:
-    image: vernik777/my-number-consumer:spring-plugin
+    image: vernik777/my-number-consumer:latest
     container_name: consumer
     depends_on:
       - db
