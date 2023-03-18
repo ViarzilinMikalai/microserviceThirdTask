@@ -1,0 +1,91 @@
+version: '2'
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://127.0.0.1:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/error.log:/etc/nginx/error_log.log
+      - ./nginx/cache/:/etc/nginx/cache
+    depends_on:
+      - producer-1
+      - producer-2
+      - producer-3
+    ports:
+      - "8080:8080"
+
+  producer-1:
+    image: my-number-producer-3:latest
+    container_name: producer-1
+    depends_on:
+      - kafka
+      - consumer
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+
+  producer-2:
+    image: my-number-producer-3:latest
+    container_name: producer-2
+    depends_on:
+      - kafka
+      - consumer
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+
+  producer-3:
+    image: my-number-producer-3:latest
+    container_name: producer-3
+    depends_on:
+      - kafka
+      - consumer
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+
+  consumer:
+    image: vernik777/my-number-consumer:latest
+    container_name: consumer
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+
